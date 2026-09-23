@@ -858,6 +858,22 @@
       <span class="tag">Regla para el examen</span>
       Un rango o desviación estándar mayor solo permite concluir <b>"hay más variedad / menos consistencia"</b>. Nunca permite concluir por sí solo que algo es más rápido, mejor, más leal o de mayor capacidad — esas son conclusiones que el dato de dispersión no respalda.
     </div>
+
+    <div class="panel">
+      <h3>Entonces, ¿qué necesito para decidir cuál es "mejor"?</h3>
+      <div class="sub">La dispersión sola no alcanza — mide consistencia, no calidad. Además necesitas:</div>
+      <div class="table-scroll">
+        <table>
+          <thead><tr><th>Necesitas</th><th>Para qué</th></tr></thead>
+          <tbody>
+            <tr><td>Un criterio explícito de "mejor"</td><td>Definir si mejor = más rápido, más consistente, mejor calidad…</td></tr>
+            <tr><td>Media o mediana de cada grupo</td><td>Comparar el desempeño típico, no un dato aislado</td></tr>
+            <tr><td>Dispersión (rango, desv. estándar)</td><td>Comparar consistencia, no velocidad ni calidad</td></tr>
+            <tr><td>Prueba estadística (opcional)</td><td>Confirmar si la diferencia es real o solo azar de la muestra</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
   </section>
 
   <!-- ============ MODULE 5: IMPUTACIÓN ============ -->
@@ -890,6 +906,26 @@
     <div class="callout">
       <span class="tag">Regla para el examen</span>
       Si el gerente pregunta "¿es un error que los valores imputados queden idénticos?" la respuesta es <b>no</b> — es justamente lo que hace la media: usar un único valor para sustituir todos los datos faltantes considerados. La crítica válida a este método es otra: pierde la variabilidad individual real de cada caso.
+    </div>
+
+    <div class="panel">
+      <h3>¿Qué otros métodos de imputación existen?</h3>
+      <div class="sub">La media no es el único camino para llenar datos faltantes:</div>
+      <div class="table-scroll">
+        <table>
+          <thead><tr><th>Método</th><th>Idea</th></tr></thead>
+          <tbody>
+            <tr><td>Mediana / moda</td><td>Como la media, pero robusta a outliers (mediana) o para variables categóricas (moda)</td></tr>
+            <tr><td>Valor constante</td><td>Asigna un valor fijo (ej. "Desconocido") en vez de estimarlo</td></tr>
+            <tr><td>Regresión</td><td>Predice el faltante usando otras variables del mismo registro</td></tr>
+            <tr><td>K vecinos más cercanos (KNN)</td><td>Promedia los registros más parecidos al que tiene el dato faltante</td></tr>
+            <tr><td>Interpolación / forward fill</td><td>Usa los valores vecinos en una serie de tiempo</td></tr>
+            <tr><td>Imputación múltiple (MICE)</td><td>Genera varios valores plausibles en vez de uno solo</td></tr>
+            <tr><td>Eliminación de casos</td><td>No imputa: descarta los registros incompletos</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="chart-caption">Los métodos de un solo resumen (media, mediana, moda, constante) siempre repiten el mismo valor entre registros imputados. Los que usan información de cada caso (regresión, KNN, interpolación, imputación múltiple) sí generan valores distintos.</div>
     </div>
   </section>
 
