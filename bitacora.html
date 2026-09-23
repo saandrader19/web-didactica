@@ -1,0 +1,1484 @@
+<title>Bitácora de Datos</title>
+<style>
+  :root{
+    --bg:#F4F6F3;
+    --surface:#FFFFFF;
+    --surface-2:#EAEFEA;
+    --surface-3:#DEE6DF;
+    --ink:#152420;
+    --ink-soft:#4B5B53;
+    --ink-faint:#7C8B82;
+    --accent:#C17A24;
+    --accent-soft:#F1DDBB;
+    --accent-ink:#5A3610;
+    --accent-2:#256B5B;
+    --accent-2-soft:#D3E7E1;
+    --danger:#AD4A2E;
+    --danger-soft:#F3DCD3;
+    --border:#D7DFD8;
+    --shadow: 0 1px 2px rgba(21,36,32,.06), 0 6px 20px rgba(21,36,32,.05);
+    color-scheme: light;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --bg:#0E1512;
+      --surface:#151F1A;
+      --surface-2:#1C2820;
+      --surface-3:#243229;
+      --ink:#E9EEE9;
+      --ink-soft:#A8B5AC;
+      --ink-faint:#748078;
+      --accent:#E6A94F;
+      --accent-soft:#3A2A10;
+      --accent-ink:#FBE3B8;
+      --accent-2:#4FA593;
+      --accent-2-soft:#16332C;
+      --danger:#E08064;
+      --danger-soft:#3B2018;
+      --border:#28362E;
+      --shadow: 0 1px 2px rgba(0,0,0,.3), 0 10px 30px rgba(0,0,0,.35);
+      color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#0E1512;
+    --surface:#151F1A;
+    --surface-2:#1C2820;
+    --surface-3:#243229;
+    --ink:#E9EEE9;
+    --ink-soft:#A8B5AC;
+    --ink-faint:#748078;
+    --accent:#E6A94F;
+    --accent-soft:#3A2A10;
+    --accent-ink:#FBE3B8;
+    --accent-2:#4FA593;
+    --accent-2-soft:#16332C;
+    --danger:#E08064;
+    --danger-soft:#3B2018;
+    --border:#28362E;
+    --shadow: 0 1px 2px rgba(0,0,0,.3), 0 10px 30px rgba(0,0,0,.35);
+    color-scheme: dark;
+  }
+
+  * { box-sizing: border-box; }
+  body{
+    background: var(--bg);
+    color: var(--ink);
+    font-family: "Public Sans", -apple-system, BlinkMacSystemFont, sans-serif;
+    font-size: 16px;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+  }
+  h1,h2,h3,h4{
+    font-family: "Fraunces", Georgia, serif;
+    font-weight: 600;
+    text-wrap: balance;
+    color: var(--ink);
+    margin: 0;
+  }
+  code, .mono, .code, input, select{
+    font-family: "JetBrains Mono", ui-monospace, Menlo, monospace;
+    font-variant-numeric: tabular-nums;
+  }
+  a { color: var(--accent-2); }
+  ::selection{ background: var(--accent-soft); }
+
+  .wrap{
+    max-width: 880px;
+    margin: 0 auto;
+    padding-inline: 20px;
+  }
+
+  /* ---------- Header / nav ---------- */
+  header.top{
+    position: sticky;
+    top: env(safe-area-inset-top, 0px);
+    z-index: 50;
+    background: color-mix(in srgb, var(--bg) 88%, transparent);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--border);
+  }
+  .top-inner{
+    max-width: 880px;
+    margin: 0 auto;
+    padding: 12px 20px;
+    display:flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .brand-row{
+    display:flex;
+    align-items:center;
+    justify-content: space-between;
+    gap: 12px;
+  }
+  .brand{
+    display:flex;
+    align-items:center;
+    gap: 10px;
+    font-family: "Fraunces", serif;
+    font-weight: 600;
+    font-size: 1.05rem;
+    letter-spacing: .01em;
+  }
+  .brand .mark{
+    width: 26px; height: 26px;
+    border-radius: 7px;
+    background: var(--accent);
+    display:flex; align-items:center; justify-content:center;
+    color: var(--surface);
+    font-family: "JetBrains Mono", monospace;
+    font-size: .8rem;
+    font-weight: 700;
+    flex: none;
+  }
+  .progress-pill{
+    font-size: .72rem;
+    color: var(--ink-soft);
+    display:flex;
+    align-items:center;
+    gap:6px;
+    white-space:nowrap;
+  }
+  .progress-track{
+    width: 64px; height: 5px;
+    background: var(--surface-3);
+    border-radius: 3px;
+    overflow: hidden;
+  }
+  .progress-fill{
+    height: 100%;
+    background: var(--accent-2);
+    width: 0%;
+    transition: width .4s ease;
+  }
+  nav.pills{
+    display:flex;
+    gap: 6px;
+    overflow-x: auto;
+    padding-bottom: 2px;
+    scrollbar-width: none;
+  }
+  nav.pills::-webkit-scrollbar{ display:none; }
+  nav.pills a{
+    flex: none;
+    font-size: .78rem;
+    color: var(--ink-soft);
+    text-decoration:none;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 6px 11px;
+    border-radius: 999px;
+    display:flex;
+    align-items:center;
+    gap:5px;
+    transition: background .15s, color .15s, border-color .15s;
+  }
+  nav.pills a.active{
+    background: var(--ink);
+    color: var(--bg);
+    border-color: var(--ink);
+  }
+  nav.pills a .dot{
+    width:5px;height:5px;border-radius:50%;
+    background: var(--accent-2);
+    flex: none;
+  }
+  nav.pills a.active .dot{ background: var(--accent); }
+
+  /* ---------- Hero ---------- */
+  .hero{
+    padding: 48px 0 28px;
+  }
+  .eyebrow{
+    font-family:"JetBrains Mono", monospace;
+    font-size: .72rem;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: var(--accent-2);
+    margin-bottom: 10px;
+    display:block;
+  }
+  .hero h1{
+    font-size: clamp(1.8rem, 4.5vw, 2.6rem);
+    line-height: 1.12;
+    margin-bottom: 14px;
+  }
+  .hero p{
+    color: var(--ink-soft);
+    font-size: 1.02rem;
+    max-width: 62ch;
+  }
+  .hero-tags{
+    display:flex;
+    flex-wrap:wrap;
+    gap:8px;
+    margin-top: 18px;
+  }
+  .hero-tags span{
+    font-size: .74rem;
+    color: var(--ink-soft);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 4px 10px;
+    border-radius: 999px;
+  }
+
+  /* ---------- Sections ---------- */
+  section.module{
+    padding: 40px 0;
+    border-top: 1px solid var(--border);
+  }
+  .module-head{
+    display:flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 16px;
+    margin-bottom: 6px;
+  }
+  .module-num{
+    font-family:"JetBrains Mono", monospace;
+    font-size: .74rem;
+    color: var(--accent);
+    letter-spacing: .08em;
+    display:block;
+    margin-bottom: 8px;
+  }
+  .module h2{
+    font-size: clamp(1.35rem, 3vw, 1.65rem);
+  }
+  .module > p.lede{
+    color: var(--ink-soft);
+    margin-top: 10px;
+    max-width: 66ch;
+  }
+  label.study-check{
+    display:flex;
+    align-items:center;
+    gap:6px;
+    font-size: .72rem;
+    color: var(--ink-faint);
+    white-space: nowrap;
+    cursor: pointer;
+    user-select:none;
+    flex: none;
+    padding-top: 4px;
+  }
+  label.study-check input{ accent-color: var(--accent-2); width:14px; height:14px; }
+
+  .panel{
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 22px;
+    margin-top: 18px;
+    box-shadow: var(--shadow);
+  }
+  .panel h3{
+    font-size: 1rem;
+    font-family: "Public Sans", sans-serif;
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+  .panel .sub{
+    font-size: .84rem;
+    color: var(--ink-soft);
+    margin-bottom: 14px;
+  }
+
+  .callout{
+    border-left: 3px solid var(--accent);
+    background: var(--accent-soft);
+    color: var(--accent-ink);
+    border-radius: 0 10px 10px 0;
+    padding: 12px 16px;
+    font-size: .9rem;
+    margin-top: 16px;
+  }
+  .callout.good{
+    border-color: var(--accent-2);
+    background: var(--accent-2-soft);
+    color: var(--ink);
+  }
+  .callout b{ font-weight: 700; }
+  .callout .tag{
+    font-family:"JetBrains Mono", monospace;
+    font-size: .68rem;
+    text-transform: uppercase;
+    letter-spacing:.08em;
+    display:block;
+    margin-bottom:4px;
+    opacity: .8;
+  }
+
+  /* ---------- Histogram demo ---------- */
+  .hist-controls{
+    display:flex;
+    align-items:center;
+    gap: 14px;
+    flex-wrap: wrap;
+    margin-bottom: 16px;
+  }
+  .hist-controls input[type=range]{
+    flex: 1;
+    min-width: 160px;
+    accent-color: var(--accent);
+  }
+  .hist-controls .val{
+    font-size: .82rem;
+    background: var(--surface-2);
+    border-radius: 8px;
+    padding: 4px 10px;
+    color: var(--ink);
+    font-weight: 600;
+    min-width: 92px;
+    text-align:center;
+  }
+  .chart{
+    display:flex;
+    align-items:flex-end;
+    gap: 2px;
+    height: 190px;
+    border-bottom: 1px solid var(--border);
+    padding-top: 8px;
+  }
+  .bar{
+    flex:1;
+    background: linear-gradient(180deg, var(--accent), color-mix(in srgb, var(--accent) 70%, var(--ink) 10%));
+    border-radius: 3px 3px 0 0;
+    min-height: 1px;
+    position: relative;
+    transition: height .35s cubic-bezier(.2,.8,.2,1);
+  }
+  .chart-labels{
+    display:flex;
+    gap:2px;
+    margin-top: 6px;
+  }
+  .chart-labels span{
+    flex:1;
+    font-size: .6rem;
+    color: var(--ink-faint);
+    text-align:center;
+    white-space:nowrap;
+    overflow:hidden;
+  }
+  .chart-caption{
+    font-size: .78rem;
+    color: var(--ink-soft);
+    margin-top: 10px;
+  }
+  .hist-pair{
+    display:grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px;
+    margin-top: 4px;
+  }
+  @media (max-width: 620px){ .hist-pair{ grid-template-columns: 1fr; } }
+  .hist-pair .col h4{
+    font-size: .78rem;
+    font-family:"JetBrains Mono", monospace;
+    color: var(--ink-soft);
+    font-weight: 600;
+    margin-bottom: 8px;
+    text-transform: uppercase;
+    letter-spacing: .04em;
+  }
+
+  /* ---------- Skew demo ---------- */
+  .toggle-row{
+    display:flex;
+    gap:8px;
+    margin-bottom: 18px;
+    flex-wrap: wrap;
+  }
+  .toggle-btn{
+    font-size: .82rem;
+    font-weight: 600;
+    padding: 8px 14px;
+    border-radius: 9px;
+    border: 1px solid var(--border);
+    background: var(--surface-2);
+    color: var(--ink-soft);
+    cursor: pointer;
+  }
+  .toggle-btn.active{
+    background: var(--ink);
+    color: var(--bg);
+    border-color: var(--ink);
+  }
+  .skew-wrap{ position: relative; padding-top: 6px; }
+  .skew-arrow{
+    font-size: .78rem;
+    font-weight: 700;
+    color: var(--danger);
+    text-align: center;
+    margin-top: 10px;
+  }
+
+  /* ---------- Dispersion demo ---------- */
+  .dotline{
+    position: relative;
+    height: 46px;
+    background: var(--surface-2);
+    border-radius: 10px;
+    margin: 10px 0 6px;
+  }
+  .dotline .dot{
+    position:absolute;
+    top:50%;
+    width: 10px; height:10px;
+    border-radius:50%;
+    background: var(--accent-2);
+    transform: translate(-50%,-50%);
+    border: 2px solid var(--surface);
+  }
+  .dotline .range-band{
+    position:absolute;
+    top: 0; bottom:0;
+    background: color-mix(in srgb, var(--accent) 22%, transparent);
+    border-radius: 10px;
+  }
+  .dispersion-stats{
+    display:flex;
+    gap: 18px;
+    flex-wrap: wrap;
+    margin-top: 10px;
+    font-size: .8rem;
+    color: var(--ink-soft);
+  }
+  .dispersion-stats b{ color: var(--ink); }
+  .dline-label{
+    font-size: .78rem;
+    font-weight: 700;
+    color: var(--ink);
+    margin-top: 18px;
+    margin-bottom: 2px;
+  }
+
+  /* ---------- Table ---------- */
+  table{
+    width: 100%;
+    border-collapse: collapse;
+    font-size: .84rem;
+  }
+  th, td{
+    text-align: left;
+    padding: 8px 10px;
+    border-bottom: 1px solid var(--border);
+  }
+  th{
+    font-family:"JetBrains Mono", monospace;
+    font-size: .68rem;
+    text-transform: uppercase;
+    letter-spacing: .05em;
+    color: var(--ink-faint);
+    font-weight: 600;
+  }
+  .table-scroll{ overflow-x: auto; }
+  td.filled{
+    background: var(--accent-soft);
+    color: var(--accent-ink);
+    font-weight: 700;
+    border-radius: 4px;
+  }
+  td.missing{ color: var(--ink-faint); }
+  .btn{
+    font-size: .84rem;
+    font-weight: 700;
+    padding: 9px 16px;
+    border-radius: 9px;
+    border: 1px solid var(--ink);
+    background: var(--ink);
+    color: var(--bg);
+    cursor: pointer;
+    display: inline-flex;
+    align-items:center;
+    gap:6px;
+  }
+  .btn.ghost{
+    background: transparent;
+    color: var(--ink);
+  }
+  .btn:disabled{ opacity:.45; cursor:default; }
+
+  /* ---------- Python cards ---------- */
+  .code-grid{
+    display:grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+  @media (max-width:560px){ .code-grid{ grid-template-columns: 1fr; } }
+  .code-card{
+    border: 1px solid var(--border);
+    background: var(--surface-2);
+    border-radius: 10px;
+    padding: 14px;
+    cursor: pointer;
+    transition: border-color .15s, background .15s;
+  }
+  .code-card:hover{ border-color: var(--accent-2); }
+  .code-card.picked{
+    border-color: var(--accent-2);
+    background: var(--accent-2-soft);
+  }
+  .code-card.wrong{
+    border-color: var(--danger);
+    background: var(--danger-soft);
+  }
+  .code-card code{
+    display:block;
+    font-size: .82rem;
+    font-weight: 600;
+    margin-bottom: 8px;
+    word-break: break-word;
+  }
+  .code-card .desc{
+    font-size: .78rem;
+    color: var(--ink-soft);
+    display:none;
+  }
+  .code-card.revealed .desc{ display:block; }
+  .code-card .verdict{
+    font-size: .7rem;
+    font-weight: 700;
+    margin-top:8px;
+    display:none;
+  }
+  .code-card.revealed.correct .verdict{ display:block; color: var(--accent-2); }
+  .code-card.revealed.incorrect .verdict{ display:block; color: var(--danger); }
+
+  /* ---------- Quiz ---------- */
+  .quiz-item{
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 18px;
+    background: var(--surface);
+    margin-bottom: 14px;
+  }
+  .quiz-item .qn{
+    font-family:"JetBrains Mono", monospace;
+    font-size: .7rem;
+    color: var(--accent);
+    letter-spacing: .06em;
+    margin-bottom: 6px;
+  }
+  .quiz-item .prompt{
+    font-weight: 700;
+    font-size: .95rem;
+    margin-bottom: 12px;
+  }
+  .quiz-item .story{
+    font-weight: 400;
+    color: var(--ink-soft);
+    font-size: .84rem;
+    display:block;
+    margin-bottom: 6px;
+  }
+  .opt{
+    display:flex;
+    align-items:flex-start;
+    gap: 10px;
+    padding: 9px 10px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    margin-bottom: 7px;
+    cursor: pointer;
+    font-size: .86rem;
+    background: var(--surface-2);
+  }
+  .opt:hover{ border-color: var(--accent-2); }
+  .opt .letter{
+    font-family:"JetBrains Mono", monospace;
+    font-weight: 700;
+    font-size: .76rem;
+    color: var(--ink-faint);
+    flex: none;
+  }
+  .opt.correct{
+    border-color: var(--accent-2);
+    background: var(--accent-2-soft);
+  }
+  .opt.incorrect{
+    border-color: var(--danger);
+    background: var(--danger-soft);
+  }
+  .opt.disabled{ cursor: default; }
+  .explain{
+    margin-top: 10px;
+    font-size: .82rem;
+    color: var(--ink-soft);
+    background: var(--surface-2);
+    border-radius: 8px;
+    padding: 10px 12px;
+    display:none;
+  }
+  .explain.show{ display:block; }
+  .quiz-header{
+    display:flex;
+    justify-content: space-between;
+    align-items:center;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin: 18px 0;
+  }
+  .score-badge{
+    font-family:"JetBrains Mono", monospace;
+    font-weight: 700;
+    font-size: .85rem;
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    padding: 6px 12px;
+    border-radius: 999px;
+  }
+
+  /* ---------- Cheat sheet ---------- */
+  .cheat-grid{
+    display:grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+  @media (max-width:620px){ .cheat-grid{ grid-template-columns: 1fr; } }
+  .cheat-card{
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px;
+    background: var(--surface);
+  }
+  .cheat-card .k{
+    font-family:"JetBrains Mono", monospace;
+    font-size: .68rem;
+    color: var(--accent-2);
+    text-transform: uppercase;
+    letter-spacing: .06em;
+    margin-bottom:6px;
+    display:block;
+  }
+  .cheat-card p{ font-size: .84rem; color: var(--ink-soft); margin:0; }
+  .cheat-card p b{ color: var(--ink); }
+
+  footer{
+    padding: 40px 0 60px;
+    text-align:center;
+    color: var(--ink-faint);
+    font-size: .78rem;
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    .bar, .progress-fill{ transition: none; }
+  }
+</style>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Public+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+
+<header class="top">
+  <div class="top-inner">
+    <div class="brand-row">
+      <div class="brand"><span class="mark">∑</span> Bitácora de Datos</div>
+      <div class="progress-pill">
+        <span id="progressLabel">0/8 módulos</span>
+        <span class="progress-track"><span class="progress-fill" id="progressFill"></span></span>
+      </div>
+    </div>
+    <nav class="pills" id="navPills">
+      <a href="#histogramas" data-mod="m1"><span class="dot"></span>Histogramas</a>
+      <a href="#frecuencia" data-mod="m2"><span class="dot"></span>Frecuencia</a>
+      <a href="#sesgo" data-mod="m3"><span class="dot"></span>Sesgo</a>
+      <a href="#dispersion" data-mod="m4"><span class="dot"></span>Dispersión</a>
+      <a href="#imputacion" data-mod="m5"><span class="dot"></span>Imputación</a>
+      <a href="#python" data-mod="m6"><span class="dot"></span>Python</a>
+      <a href="#r-python" data-mod="m7"><span class="dot"></span>R vs Python</a>
+      <a href="#practica" data-mod="m8"><span class="dot"></span>Práctica</a>
+    </nav>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <section class="hero">
+    <span class="eyebrow">Guía interactiva · Análisis de datos</span>
+    <h1>Los siete conceptos que decidirán tu parcial</h1>
+    <p>Cada módulo está construido a partir del tipo de trampas que ya viste en tu simulacro: bins que cambian la forma del histograma, sesgo que no es donde crees, dispersión que no significa "mejor" ni "peor", e imputaciones que parecen errores sin serlo. Manipula cada demo hasta que la intuición te cuadre — no memorices la regla, entiéndela.</p>
+    <div class="hero-tags">
+      <span>Histogramas y bins</span>
+      <span>Frecuencia absoluta</span>
+      <span>Sesgo (skewness)</span>
+      <span>Dispersión</span>
+      <span>Imputación</span>
+      <span>Python / pandas</span>
+      <span>R vs Python</span>
+    </div>
+  </section>
+
+  <!-- ============ MODULE 1: HISTOGRAMAS ============ -->
+  <section class="module" id="histogramas">
+    <div class="module-head">
+      <div>
+        <span class="module-num">01 · La trampa más común del examen</span>
+        <h2>El histograma no es "los datos" — es una decisión de diseño</h2>
+      </div>
+      <label class="study-check"><input type="checkbox" data-mod="m1"> Estudiado</label>
+    </div>
+    <p class="lede">Los mismos 300 datos pueden verse como una montaña rusa con varios picos, o como una colina suave y uniforme. La diferencia no está en los datos: está en el <b>ancho de clase (bin width)</b> que elegiste para agruparlos.</p>
+
+    <div class="panel">
+      <h3>Demo — mismos 300 "km recorridos", ancho de clase variable</h3>
+      <div class="sub">Mueve el control y observa cómo aparecen o desaparecen picos sin que un solo dato cambie.</div>
+      <div class="hist-controls">
+        <span style="font-size:.8rem;color:var(--ink-soft)">Ancho de clase:</span>
+        <input type="range" id="binSlider" min="5" max="60" step="5" value="10">
+        <span class="val" id="binVal">10 km</span>
+      </div>
+      <div class="chart" id="histChart"></div>
+      <div class="chart-labels" id="histLabels"></div>
+      <div class="chart-caption" id="histCaption"></div>
+    </div>
+
+    <div class="panel">
+      <h3>Lado a lado, como en el examen</h3>
+      <div class="sub">Histograma A (clases angostas) vs. Histograma B (clases anchas) — exactamente los mismos datos.</div>
+      <div class="hist-pair">
+        <div class="col">
+          <h4>A · clases de 10 km</h4>
+          <div class="chart" id="histA"></div>
+        </div>
+        <div class="col">
+          <h4>B · clases de 50 km</h4>
+          <div class="chart" id="histB"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="callout">
+      <span class="tag">Regla para el examen</span>
+      Si dos histogramas de los <b>mismos datos</b> se ven distinto, lo primero que hay que sospechar es la construcción (número de intervalos / ancho de clase) — no que "los datos cambiaron" ni que uno de los dos gráficos sea "más correcto". Ningún histograma es automáticamente superior por tener más o menos clases.
+    </div>
+  </section>
+
+  <!-- ============ MODULE 2: FRECUENCIA ============ -->
+  <section class="module" id="frecuencia">
+    <div class="module-head">
+      <div>
+        <span class="module-num">02 · Lectura literal</span>
+        <h2>Frecuencia absoluta: cuenta casos, no porcentajes ni comparaciones</h2>
+      </div>
+      <label class="study-check"><input type="checkbox" data-mod="m2"> Estudiado</label>
+    </div>
+    <p class="lede">La frecuencia absoluta de una categoría es, literalmente, <b>cuántas observaciones cayeron en esa categoría</b>. Nada más. No es un porcentaje, no es una comparación contra las demás categorías, y no dice nada sobre "clientes distintos" a menos que el enunciado lo diga.</p>
+
+    <div class="panel">
+      <h3>Ejemplo — quejas registradas en un gimnasio (una semana, 90 quejas)</h3>
+      <div class="table-scroll">
+        <table>
+          <thead><tr><th>Motivo principal</th><th>Frecuencia absoluta</th></tr></thead>
+          <tbody>
+            <tr><td>Máquinas dañadas</td><td>29</td></tr>
+            <tr><td>Clases canceladas</td><td>24</td></tr>
+            <tr><td>Higiene de vestidores</td><td>21</td></tr>
+            <tr><td>Atención del personal</td><td>16</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="sub" style="margin-top:12px">El gerente afirma: <i>"la frecuencia absoluta de máquinas dañadas es 29"</i>. Elige la lectura correcta:</div>
+      <div id="freqOptions"></div>
+      <div class="explain" id="freqExplain"></div>
+    </div>
+
+    <div class="callout">
+      <span class="tag">Regla para el examen</span>
+      Traduce la frecuencia absoluta como: <b>"de las N observaciones totales, X fueron clasificadas principalmente en esta categoría"</b>. Cualquier opción que hable de porcentajes, de "clientes distintos" sin decirlo el enunciado, o que compare contra otra categoría, está agregando información que el número no contiene.
+    </div>
+  </section>
+
+  <!-- ============ MODULE 3: SESGO ============ -->
+  <section class="module" id="sesgo">
+    <div class="module-head">
+      <div>
+        <span class="module-num">03 · El error más repetido</span>
+        <h2>El sesgo lo nombra la cola, no la concentración</h2>
+      </div>
+      <label class="study-check"><input type="checkbox" data-mod="m3"> Estudiado</label>
+    </div>
+    <p class="lede">Es tentador decir "la mayoría de los datos está a la izquierda, entonces hay sesgo a la izquierda". <b>Es al revés.</b> El sesgo se nombra según hacia dónde se estira la cola larga de valores poco frecuentes — no según dónde está la mayor concentración.</p>
+
+    <div class="panel">
+      <h3>Demo — ¿hacia dónde apunta la cola?</h3>
+      <div class="sub">Cambia la forma y observa: la concentración y el nombre del sesgo casi siempre apuntan en direcciones opuestas.</div>
+      <div class="toggle-row">
+        <button class="toggle-btn active" data-shape="right">Concentración en valores bajos</button>
+        <button class="toggle-btn" data-shape="left">Concentración en valores altos</button>
+      </div>
+      <div class="skew-wrap">
+        <div class="chart" id="skewChart"></div>
+        <div class="skew-arrow" id="skewArrow"></div>
+      </div>
+      <div class="chart-caption" id="skewCaption"></div>
+    </div>
+
+    <div class="callout">
+      <span class="tag">Regla para el examen</span>
+      <b>Sesgo a la derecha (positivo):</b> la mayoría de los valores es baja, pero unos pocos valores altos "estiran" la cola hacia la derecha.<br>
+      <b>Sesgo a la izquierda (negativo):</b> la mayoría de los valores es alta, pero unos pocos valores bajos estiran la cola hacia la izquierda.<br>
+      Un histograma puede mostrar dónde se concentran los datos, pero eso <i>no define automáticamente</i> la dirección del sesgo — hay que mirar hacia dónde se prolonga la cola.
+    </div>
+  </section>
+
+  <!-- ============ MODULE 4: DISPERSIÓN ============ -->
+  <section class="module" id="dispersion">
+    <div class="module-head">
+      <div>
+        <span class="module-num">04 · Cuidado con las conclusiones extra</span>
+        <h2>Menor dispersión = más consistencia — nada más</h2>
+      </div>
+      <label class="study-check"><input type="checkbox" data-mod="m4"> Estudiado</label>
+    </div>
+    <p class="lede">La dispersión (rango, varianza, desviación estándar) mide qué tan parecidos son los datos entre sí. <b>No</b> mide velocidad, calidad, capacidad, ni si un lugar "funciona mejor" que otro. Una sede con tiempos muy dispersos puede tener un dato muy rápido y aun así ser, en conjunto, menos predecible.</p>
+
+    <div class="panel">
+      <h3>Demo — tiempo de espera en caja (minutos), dos sucursales</h3>
+      <div class="sub">Cada punto es un cliente atendido. Observa el ancho de la banda, no solo el punto más rápido.</div>
+
+      <div class="dline-label">Sucursal Centro</div>
+      <div class="dotline" id="dotA"></div>
+      <div class="dispersion-stats" id="statsA"></div>
+
+      <div class="dline-label">Sucursal Norte</div>
+      <div class="dotline" id="dotB"></div>
+      <div class="dispersion-stats" id="statsB"></div>
+    </div>
+
+    <div class="panel">
+      <h3>El gerente afirma…</h3>
+      <div class="sub">"La Sucursal Norte debe estar funcionando mejor, porque algunos clientes fueron atendidos en solo 1 minuto." ¿Es válida esa conclusión?</div>
+      <div id="dispOptions"></div>
+      <div class="explain" id="dispExplain"></div>
+    </div>
+
+    <div class="callout">
+      <span class="tag">Regla para el examen</span>
+      Un rango o desviación estándar mayor solo permite concluir <b>"hay más variedad / menos consistencia"</b>. Nunca permite concluir por sí solo que algo es más rápido, mejor, más leal o de mayor capacidad — esas son conclusiones que el dato de dispersión no respalda.
+    </div>
+  </section>
+
+  <!-- ============ MODULE 5: IMPUTACIÓN ============ -->
+  <section class="module" id="imputacion">
+    <div class="module-head">
+      <div>
+        <span class="module-num">05 · Lo que parece error y no lo es</span>
+        <h2>Imputar con la media repite el mismo valor — eso es lo esperado</h2>
+      </div>
+      <label class="study-check"><input type="checkbox" data-mod="m5"> Estudiado</label>
+    </div>
+    <p class="lede">Cuando imputas datos faltantes usando la media, <b>todos</b> los valores faltantes reciben exactamente el mismo número: la media de los datos disponibles. Ver valores repetidos después de imputar no es un indicio de que algo salió mal — es el comportamiento normal (y una de las limitaciones conocidas) de este método.</p>
+
+    <div class="panel">
+      <h3>Demo — costo de mantenimiento de 16 vehículos (miles $)</h3>
+      <div class="sub">4 registros no tienen dato. Imputa con la media de los 12 disponibles y observa qué ocurre.</div>
+      <div class="table-scroll">
+        <table>
+          <thead><tr><th>Vehículo</th><th>Costo</th></tr></thead>
+          <tbody id="imputeBody"></tbody>
+        </table>
+      </div>
+      <div style="margin-top:14px">
+        <button class="btn" id="imputeBtn">Imputar con la media</button>
+        <button class="btn ghost" id="imputeReset">Reiniciar</button>
+      </div>
+      <div class="chart-caption" id="imputeCaption"></div>
+    </div>
+
+    <div class="callout">
+      <span class="tag">Regla para el examen</span>
+      Si el gerente pregunta "¿es un error que los valores imputados queden idénticos?" la respuesta es <b>no</b> — es justamente lo que hace la media: usar un único valor para sustituir todos los datos faltantes considerados. La crítica válida a este método es otra: pierde la variabilidad individual real de cada caso.
+    </div>
+  </section>
+
+  <!-- ============ MODULE 6: PYTHON ============ -->
+  <section class="module" id="python">
+    <div class="module-head">
+      <div>
+        <span class="module-num">06 · Sintaxis mínima que debes reconocer</span>
+        <h2>pandas / matplotlib: elige el método según lo que necesitas ver</h2>
+      </div>
+      <label class="study-check"><input type="checkbox" data-mod="m6"> Estudiado</label>
+    </div>
+    <p class="lede">El examen no pide que programes — pide que reconozcas qué línea responde a qué pregunta. Un número resumen (media, suma, máximo) nunca muestra la <i>forma</i> de una distribución. Solo un gráfico lo hace.</p>
+
+    <div class="panel">
+      <h3>¿Cuál línea muestra la distribución completa de <code>datos["Tiempo"]</code>?</h3>
+      <div class="sub">Haz clic en cada línea para revelar qué hace. Luego decide cuál responde a "quiero ver cómo se distribuyen los tiempos".</div>
+      <div class="code-grid" id="codeGrid"></div>
+    </div>
+
+    <div class="callout">
+      <span class="tag">Regla para el examen</span>
+      <code>.mean()</code>, <code>.sum()</code> y <code>.max()</code> devuelven <b>un solo número</b>. Solo <code>plt.hist(...)</code> (o el equivalente <code>datos["Tiempo"].hist()</code>) construye un histograma y muestra la forma de la distribución completa.
+    </div>
+  </section>
+
+  <!-- ============ MODULE 7: R vs PYTHON ============ -->
+  <section class="module" id="r-python">
+    <div class="module-head">
+      <div>
+        <span class="module-num">07 · Traductor rápido</span>
+        <h2>R usa <code>$</code>, Python usa corchetes con texto</h2>
+      </div>
+      <label class="study-check"><input type="checkbox" data-mod="m7"> Estudiado</label>
+    </div>
+    <p class="lede">La equivalencia que más cae en examen es esta: para acceder a una columna de un data frame, R usa el operador <code>$</code> seguido del nombre sin comillas; Python (pandas) usa corchetes con el nombre <b>entre comillas</b>.</p>
+
+    <div class="panel">
+      <h3>Tabla de equivalencias</h3>
+      <div class="table-scroll">
+        <table>
+          <thead><tr><th>Objetivo</th><th>R</th><th>Python (pandas)</th></tr></thead>
+          <tbody>
+            <tr><td>Acceder a una columna</td><td><code>clientes$Compras</code></td><td><code>clientes["Compras"]</code></td></tr>
+            <tr><td>Acceder por posición</td><td><code>clientes[fila, col]</code></td><td><code>clientes.iloc[fila, col]</code></td></tr>
+            <tr><td>Primeras filas</td><td><code>head(clientes)</code></td><td><code>clientes.head()</code></td></tr>
+            <tr><td>Dimensiones</td><td><code>dim(clientes)</code></td><td><code>clientes.shape</code></td></tr>
+            <tr><td>Resumen estadístico</td><td><code>summary(clientes)</code></td><td><code>clientes.describe()</code></td></tr>
+            <tr><td>Media de una columna</td><td><code>mean(clientes$Compras)</code></td><td><code>clientes["Compras"].mean()</code></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h3>Ponla a prueba</h3>
+      <div class="sub">En R accedes a la columna con <code>clientes$Compras</code>. ¿Cuál es el equivalente correcto en Python?</div>
+      <div id="rpyOptions"></div>
+      <div class="explain" id="rpyExplain"></div>
+    </div>
+
+    <div class="callout">
+      <span class="tag">Regla para el examen</span>
+      Si ves paréntesis <code>()</code> para acceder a una columna en cualquiera de los dos lenguajes (<code>clientes("Compras")</code>, <code>clientes(Compras)</code>), es incorrecto — los paréntesis se reservan para llamar funciones, no para indexar columnas.
+    </div>
+  </section>
+
+  <!-- ============ RESUMEN ============ -->
+  <section class="module" id="resumen">
+    <div class="module-head">
+      <div>
+        <span class="module-num">08 · Antes de entrar al examen</span>
+        <h2>Chuleta de 8 reglas</h2>
+      </div>
+    </div>
+    <div class="cheat-grid">
+      <div class="cheat-card"><span class="k">Histogramas</span><p>La forma visible depende también de cómo se construyen los intervalos, <b>no solo</b> de los datos.</p></div>
+      <div class="cheat-card"><span class="k">Frecuencia absoluta</span><p>Es un conteo directo: "<b>X de N</b> casos cayeron en esta categoría". Nada de porcentajes implícitos.</p></div>
+      <div class="cheat-card"><span class="k">Sesgo</span><p>Se nombra por la <b>cola</b>, no por la concentración. Cola a la derecha → sesgo a la derecha.</p></div>
+      <div class="cheat-card"><span class="k">Dispersión</span><p>Mayor dispersión = <b>menos consistencia</b>. No implica mejor, peor, más rápido ni más capacidad.</p></div>
+      <div class="cheat-card"><span class="k">Imputación con la media</span><p>Todos los faltantes toman <b>el mismo valor</b>. Es esperado, no un error de cálculo.</p></div>
+      <div class="cheat-card"><span class="k">Límites del histograma</span><p>Muestra <b>dónde</b> se concentran los valores, nunca el <b>porqué</b> (lealtad, causa, calidad).</p></div>
+      <div class="cheat-card"><span class="k">Python / pandas</span><p><code>.mean()/.sum()/.max()</code> = un número. <code>plt.hist()</code> = la distribución completa.</p></div>
+      <div class="cheat-card"><span class="k">R vs Python</span><p>R: <code>df$col</code> sin comillas. Python: <code>df["col"]</code> con comillas y corchetes.</p></div>
+    </div>
+  </section>
+
+  <!-- ============ PRÁCTICA ============ -->
+  <section class="module" id="practica">
+    <div class="module-head">
+      <div>
+        <span class="module-num">09 · Simulacro corto</span>
+        <h2>Práctica — 10 preguntas nuevas, mismos conceptos</h2>
+      </div>
+      <label class="study-check"><input type="checkbox" data-mod="m8"> Estudiado</label>
+    </div>
+    <p class="lede">Escenarios distintos a los del simulacro real, pero que exigen exactamente el mismo razonamiento. Responde, revisa la explicación y repite las que falles.</p>
+
+    <div class="quiz-header">
+      <span class="score-badge" id="scoreBadge">Puntaje: 0/10</span>
+      <button class="btn ghost" id="quizReset">Reiniciar práctica</button>
+    </div>
+
+    <div id="quizContainer"></div>
+  </section>
+
+  <footer>
+    Hecho para repasar antes del parcial de Análisis de Datos — EAFIT. Toca cada demo, no solo la leas.
+  </footer>
+</div>
+
+<script>
+(function(){
+  "use strict";
+
+  // ---------------- utilities ----------------
+  function mulberry32(seed){
+    return function(){
+      seed |= 0; seed = (seed + 0x6D2B79F5) | 0;
+      let t = Math.imul(seed ^ seed >>> 15, 1 | seed);
+      t = (t + Math.imul(t ^ t >>> 7, 61 | t)) ^ t;
+      return ((t ^ t >>> 14) >>> 0) / 4294967296;
+    };
+  }
+  function randNormal(rng, mean, sd){
+    let u = 0, v = 0;
+    while (u === 0) u = rng();
+    while (v === 0) v = rng();
+    return mean + sd * Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v);
+  }
+  function clamp(v, lo, hi){ return Math.max(lo, Math.min(hi, v)); }
+
+  function safeGet(key){ try{ return localStorage.getItem(key); }catch(e){ return null; } }
+  function safeSet(key, val){ try{ localStorage.setItem(key, val); }catch(e){} }
+
+  // ---------------- dataset for histogram demo ----------------
+  const rng = mulberry32(1234);
+  const clusters = [
+    { mean: 12, sd: 4, w: 0.32 },
+    { mean: 45, sd: 6, w: 0.40 },
+    { mean: 78, sd: 5, w: 0.28 }
+  ];
+  const kmData = [];
+  for (let i = 0; i < 300; i++){
+    const r = rng();
+    let acc = 0, chosen = clusters[clusters.length - 1];
+    for (const c of clusters){ acc += c.w; if (r <= acc){ chosen = c; break; } }
+    const v = clamp(randNormal(rng, chosen.mean, chosen.sd), 0, 99.9);
+    kmData.push(v);
+  }
+  const DOMAIN_MAX = 100;
+
+  function computeBins(data, binWidth){
+    const nBins = Math.ceil(DOMAIN_MAX / binWidth);
+    const counts = new Array(nBins).fill(0);
+    data.forEach(v => {
+      const idx = Math.min(Math.floor(v / binWidth), nBins - 1);
+      counts[idx]++;
+    });
+    return counts;
+  }
+
+  function renderBars(container, counts, opts){
+    opts = opts || {};
+    container.innerHTML = "";
+    const max = Math.max(1, ...counts);
+    counts.forEach((c) => {
+      const bar = document.createElement("div");
+      bar.className = "bar";
+      bar.style.height = (4 + (c / max) * 176) + "px";
+      bar.title = c + " observaciones";
+      container.appendChild(bar);
+    });
+  }
+  function renderLabels(container, binWidth, n){
+    container.innerHTML = "";
+    const step = binWidth <= 10 ? (n > 14 ? 2 : 1) : 1;
+    for (let i = 0; i < n; i++){
+      const span = document.createElement("span");
+      if (i % step === 0) span.textContent = (i * binWidth);
+      container.appendChild(span);
+    }
+  }
+
+  function drawMainHist(width){
+    const counts = computeBins(kmData, width);
+    renderBars(document.getElementById("histChart"), counts);
+    renderLabels(document.getElementById("histLabels"), width, counts.length);
+    const peaks = counts.filter((c, i) => c > (counts[i-1]||0) && c > (counts[i+1]||0) && c > 3).length;
+    const capEl = document.getElementById("histCaption");
+    if (width <= 15){
+      capEl.textContent = "Con clases angostas se distinguen varios picos: los datos parecen agruparse en distintos grupos de kilometraje.";
+    } else if (width <= 30){
+      capEl.textContent = "Al ampliar las clases, algunos picos empiezan a fundirse entre sí.";
+    } else {
+      capEl.textContent = "Con clases muy anchas, todo se ve como una sola forma suave — los mismos 300 datos ahora parecen \"uniformes\".";
+    }
+  }
+
+  const binSlider = document.getElementById("binSlider");
+  binSlider.addEventListener("input", () => {
+    document.getElementById("binVal").textContent = binSlider.value + " km";
+    drawMainHist(parseInt(binSlider.value, 10));
+  });
+  drawMainHist(10);
+  document.getElementById("binVal").textContent = "10 km";
+
+  renderBars(document.getElementById("histA"), computeBins(kmData, 10));
+  renderBars(document.getElementById("histB"), computeBins(kmData, 50));
+
+  // ---------------- frequency module ----------------
+  const freqData = [
+    { text: "En 29 de las 90 quejas registradas, la causa principal fue una máquina dañada.", correct: true },
+    { text: "El 29% de todos los usuarios del gimnasio se quejó de las máquinas.", correct: false },
+    { text: "Las máquinas dañadas generaron 29 quejas más que todas las demás causas juntas.", correct: false },
+    { text: "29 clientes distintos e insatisfechos visitaron el gimnasio solo por máquinas dañadas.", correct: false }
+  ];
+  function buildOptions(containerId, explainId, items, explainCorrect, explainWrong){
+    const container = document.getElementById(containerId);
+    const explain = document.getElementById(explainId);
+    let answered = false;
+    items.forEach((item, i) => {
+      const div = document.createElement("div");
+      div.className = "opt";
+      div.innerHTML = '<span class="letter">' + String.fromCharCode(97+i) + '.</span><span>' + item.text + '</span>';
+      div.addEventListener("click", () => {
+        if (answered) return;
+        answered = true;
+        items.forEach((it, j) => {
+          const node = container.children[j];
+          node.classList.add("disabled");
+          if (it.correct) node.classList.add("correct");
+          else if (j === i) node.classList.add("incorrect");
+        });
+        explain.textContent = item.correct ? explainCorrect : explainWrong;
+        explain.classList.add("show");
+      });
+      container.appendChild(div);
+    });
+  }
+  buildOptions("freqOptions", "freqExplain", freqData,
+    "Correcto. La frecuencia absoluta es un conteo directo dentro del total de observaciones — nada de porcentajes ni de clientes distintos si el enunciado no lo dice.",
+    "La frecuencia absoluta solo cuenta cuántas de las 90 quejas registradas correspondieron a esa causa. No informa porcentajes, comparaciones ni número de clientes distintos.");
+
+  // ---------------- skew module ----------------
+  const skewShapes = {
+    right: { bars: [2,5,11,20,32,24,14,7,3,1], label: "Sesgo a la derecha (positivo)", arrow: "la cola se estira hacia la derecha →", caption: "La mayoría de los valores es baja (izquierda). Pero unos pocos valores altos alargan la cola hacia la derecha — por eso se llama sesgo a la derecha, aunque la concentración esté a la izquierda." },
+    left:  { bars: [1,3,7,14,24,32,20,11,5,2], label: "Sesgo a la izquierda (negativo)", arrow: "← la cola se estira hacia la izquierda", caption: "La mayoría de los valores es alta (derecha). Pero unos pocos valores bajos alargan la cola hacia la izquierda — por eso se llama sesgo a la izquierda, aunque la concentración esté a la derecha." }
+  };
+  function drawSkew(key){
+    const shape = skewShapes[key];
+    renderBars(document.getElementById("skewChart"), shape.bars);
+    document.getElementById("skewArrow").textContent = shape.arrow;
+    document.getElementById("skewCaption").innerHTML = "<b>" + shape.label + ".</b> " + shape.caption;
+  }
+  document.querySelectorAll(".toggle-btn[data-shape]").forEach(btn => {
+    btn.addEventListener("click", () => {
+      document.querySelectorAll(".toggle-btn[data-shape]").forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+      drawSkew(btn.dataset.shape);
+    });
+  });
+  drawSkew("right");
+
+  // ---------------- dispersion module ----------------
+  const sucursalCentro = [4.2, 4.6, 4.9, 5.1, 4.5, 5.3, 4.8, 5.0, 4.7, 4.4, 5.2, 4.9];
+  const sucursalNorte = [1.1, 2.4, 9.8, 3.0, 14.2, 6.5, 1.6, 11.0, 4.1, 13.5, 2.2, 8.0];
+  function drawDots(containerId, statsId, data, domainMax){
+    const container = document.getElementById(containerId);
+    container.innerHTML = "";
+    const min = Math.min(...data), max = Math.max(...data);
+    const band = document.createElement("div");
+    band.className = "range-band";
+    band.style.left = (min / domainMax * 100) + "%";
+    band.style.width = ((max - min) / domainMax * 100) + "%";
+    container.appendChild(band);
+    data.forEach(v => {
+      const dot = document.createElement("div");
+      dot.className = "dot";
+      dot.style.left = clamp(v / domainMax * 100, 1, 99) + "%";
+      dot.title = v.toFixed(1) + " min";
+      container.appendChild(dot);
+    });
+    const mean = data.reduce((a,b)=>a+b,0) / data.length;
+    document.getElementById(statsId).innerHTML =
+      "<span>Rango: <b>" + (max-min).toFixed(1) + " min</b></span>" +
+      "<span>Mínimo: <b>" + min.toFixed(1) + " min</b></span>" +
+      "<span>Máximo: <b>" + max.toFixed(1) + " min</b></span>" +
+      "<span>Media: <b>" + mean.toFixed(1) + " min</b></span>";
+  }
+  drawDots("dotA", "statsA", sucursalCentro, 16);
+  drawDots("dotB", "statsB", sucursalNorte, 16);
+
+  const dispData = [
+    { text: "No — un valor mínimo aislado no compensa que, en conjunto, la Sucursal Norte es mucho menos consistente.", correct: true },
+    { text: "Sí — el tiempo más rápido registrado demuestra que esa sucursal es más eficiente en general.", correct: false },
+    { text: "Sí — mayor dispersión siempre indica mayor capacidad de atención.", correct: false },
+    { text: "No puede evaluarse sin conocer el valor exacto de cada cliente atendido.", correct: false }
+  ];
+  buildOptions("dispOptions", "dispExplain", dispData,
+    "Correcto. La mayor dispersión de la Sucursal Norte muestra tiempos menos consistentes entre sí — no un mejor desempeño. Un solo dato rápido no representa al conjunto.",
+    "La dispersión (rango, varianza) solo informa qué tan parecidos son los datos entre sí. Un valor aislado bajo no permite concluir que el servicio, en conjunto, es mejor o más rápido.");
+
+  // ---------------- imputation module ----------------
+  const vehicleCosts = [120, 135, null, 145, 128, 132, 118, null, 140, 125, null, 130, 122, 138, null, 127];
+  let imputedState = vehicleCosts.slice();
+  let isImputed = false;
+  function renderImputeTable(){
+    const body = document.getElementById("imputeBody");
+    body.innerHTML = "";
+    imputedState.forEach((val, i) => {
+      const tr = document.createElement("tr");
+      const wasMissing = vehicleCosts[i] === null;
+      tr.innerHTML = "<td>V-" + String(i+1).padStart(2,"0") + "</td>" +
+        (val === null
+          ? '<td class="missing">— sin dato —</td>'
+          : '<td class="' + (wasMissing ? "filled" : "") + '">' + val + '</td>');
+      body.appendChild(tr);
+    });
+  }
+  renderImputeTable();
+  document.getElementById("imputeBtn").addEventListener("click", () => {
+    if (isImputed) return;
+    const known = vehicleCosts.filter(v => v !== null);
+    const mean = known.reduce((a,b)=>a+b,0) / known.length;
+    const meanRounded = Math.round(mean * 10) / 10;
+    imputedState = vehicleCosts.map(v => v === null ? meanRounded : v);
+    isImputed = true;
+    renderImputeTable();
+    document.getElementById("imputeCaption").innerHTML =
+      "Los 4 registros faltantes ahora muestran <b>exactamente " + meanRounded + "</b> — la media de los 12 datos disponibles. Esto no es un error: así funciona la imputación por media.";
+  });
+  document.getElementById("imputeReset").addEventListener("click", () => {
+    imputedState = vehicleCosts.slice();
+    isImputed = false;
+    renderImputeTable();
+    document.getElementById("imputeCaption").textContent = "";
+  });
+
+  // ---------------- python cards module ----------------
+  const codeCards = [
+    { code: 'datos["Tiempo"].mean()', desc: "Calcula el promedio de los tiempos: un solo número que resume el centro de los datos.", correct: false },
+    { code: 'datos["Tiempo"].sum()', desc: "Suma todos los tiempos. Un solo número; no dice nada sobre la forma de la distribución.", correct: false },
+    { code: 'datos["Tiempo"].max()', desc: "Devuelve el valor máximo registrado. Un solo dato, no la distribución completa.", correct: false },
+    { code: 'plt.hist(datos["Tiempo"])', desc: "Agrupa los valores en intervalos (bins) y grafica cuántas observaciones caen en cada uno: esto sí muestra la distribución completa.", correct: true }
+  ];
+  const codeGrid = document.getElementById("codeGrid");
+  codeCards.forEach(card => {
+    const div = document.createElement("div");
+    div.className = "code-card";
+    div.innerHTML = '<code>' + card.code + '</code><div class="desc">' + card.desc + '</div><div class="verdict"></div>';
+    div.addEventListener("click", () => {
+      div.classList.add("revealed");
+      if (card.correct){
+        div.classList.add("correct", "picked");
+        div.querySelector(".verdict").textContent = "✓ Esta es la que responde al objetivo del analista.";
+      } else {
+        div.classList.add("incorrect", "wrong");
+        div.querySelector(".verdict").textContent = "✗ Devuelve un solo número, no la distribución.";
+      }
+    });
+    codeGrid.appendChild(div);
+  });
+
+  // ---------------- R vs Python module ----------------
+  const rpyData = [
+    { text: 'clientes["Compras"]', correct: true },
+    { text: 'clientes(Compras)', correct: false },
+    { text: 'clientes.Compras()', correct: false },
+    { text: 'clientes$["Compras"]', correct: false }
+  ];
+  buildOptions("rpyOptions", "rpyExplain", rpyData,
+    "Correcto. Python (pandas) usa corchetes con el nombre de columna entre comillas: clientes[\"Compras\"].",
+    "En pandas, una columna se accede con corchetes y el nombre entre comillas: clientes[\"Compras\"]. Los paréntesis son para llamar funciones, no para indexar.");
+
+  // ---------------- practice quiz ----------------
+  const quiz = [
+    {
+      story: "Una panadería registra las ventas diarias de 250 días. Con clases de $5.000 el histograma muestra tres picos claros; con clases de $50.000 se ve una sola forma suave.",
+      prompt: "¿Qué explica mejor la diferencia entre ambos histogramas?",
+      options: [
+        "Los datos de ventas cambiaron entre un gráfico y otro.",
+        "El histograma de clases angostas es siempre el correcto.",
+        "El ancho de clase elegido afecta la forma visible, aunque los datos sean los mismos.",
+        "El histograma con menos picos tiene menos observaciones."
+      ],
+      correct: 2,
+      explain: "La construcción del histograma (ancho de clase) puede ocultar o revelar patrones sin que los datos cambien. Ningún ancho es 'automáticamente' el correcto."
+    },
+    {
+      story: "Un gimnasio registró 90 quejas en una semana. 'Máquinas dañadas' tiene frecuencia absoluta 29.",
+      prompt: "¿Cuál interpretación es correcta?",
+      options: [
+        "El 29% de los socios se quejó de las máquinas.",
+        "De las 90 quejas registradas, 29 fueron clasificadas como máquinas dañadas.",
+        "Máquinas dañadas tuvo 29 quejas más que las demás causas combinadas.",
+        "29 socios distintos dejaron de asistir por las máquinas."
+      ],
+      correct: 1,
+      explain: "La frecuencia absoluta es un conteo directo dentro del total: 29 de 90 casos, sin implicar porcentaje, comparación ni clientes distintos."
+    },
+    {
+      story: "En una plataforma de streaming, el tiempo de visualización de la mayoría de usuarios es alto, pero unos pocos usuarios ven muy poco contenido, estirando la distribución hacia valores bajos.",
+      prompt: "¿Cómo se llama correctamente este sesgo?",
+      options: [
+        "Sesgo a la derecha, porque la mayoría está concentrada en valores altos.",
+        "Sesgo a la izquierda, porque la cola se prolonga hacia los valores bajos.",
+        "No hay sesgo si la mayoría de los datos está concentrada en un solo lado.",
+        "Sesgo a la derecha, porque la cola siempre sigue a la concentración."
+      ],
+      correct: 1,
+      explain: "El sesgo se nombra según la dirección de la cola, no de la concentración. Aquí la cola larga apunta a valores bajos → sesgo a la izquierda."
+    },
+    {
+      story: "Una aerolínea compara el tiempo de abordaje en dos aeropuertos. En el Aeropuerto A los tiempos van de 18 a 22 minutos. En el Aeropuerto B van de 5 a 35 minutos, aunque algunos vuelos abordaron en tiempo récord.",
+      prompt: "¿Cuál aeropuerto tiene el proceso de abordaje más predecible?",
+      options: [
+        "Aeropuerto B, porque tuvo el tiempo más rápido registrado.",
+        "Aeropuerto A, porque su menor dispersión indica tiempos más consistentes entre sí.",
+        "Aeropuerto B, porque una mayor dispersión indica mayor capacidad operativa.",
+        "No puede saberse sin conocer la causa de cada retraso."
+      ],
+      correct: 1,
+      explain: "Menor dispersión (rango de solo 4 minutos) significa que los tiempos son más parecidos entre sí, es decir, más predecibles — no necesariamente más rápidos en promedio."
+    },
+    {
+      story: "Una farmacia tiene el inventario de 200 productos y a 15 les falta el precio de venta. Un analista imputa esos 15 con la media de los precios disponibles.",
+      prompt: "Después de imputar, los 15 registros antes vacíos muestran exactamente el mismo precio. ¿Qué significa esto?",
+      options: [
+        "Que el procedimiento se hizo mal, porque cada producto debería tener un precio distinto.",
+        "Que la imputación con la media debe recalcularse para cada producto de forma distinta.",
+        "Que es el comportamiento esperado: la media es un único valor que reemplaza a todos los faltantes considerados.",
+        "Que los 15 productos tenían originalmente el mismo precio."
+      ],
+      correct: 2,
+      explain: "Imputar con la media usa un solo valor (la media de los datos disponibles) para todos los registros faltantes. Ver valores repetidos es normal, no un error de cálculo."
+    },
+    {
+      story: "Un analista tiene un DataFrame llamado ventas con una columna Monto, y quiere ver la forma de la distribución de esa columna en Python.",
+      prompt: "¿Qué línea responde directamente a ese objetivo?",
+      options: [
+        "ventas[\"Monto\"].mean()",
+        "ventas[\"Monto\"].sum()",
+        "plt.hist(ventas[\"Monto\"])",
+        "ventas[\"Monto\"].max()"
+      ],
+      correct: 2,
+      explain: "Solo un histograma (plt.hist) agrupa los valores en intervalos y muestra la forma completa de la distribución. Las otras opciones devuelven un único número resumen."
+    },
+    {
+      story: "Una tienda observa que los clientes que compraron entre $800.000 y $900.000 forman una clase pequeña y alejada en el histograma. El director afirma: 'esto demuestra que son nuestros clientes más fieles, hay que darles trato VIP'.",
+      prompt: "¿Es correcta esta afirmación?",
+      options: [
+        "Sí, porque una clase alejada del resto identifica automáticamente a los clientes más valiosos.",
+        "No, porque el histograma muestra dónde se concentran los valores de compra, pero no informa sobre la lealtad de los clientes.",
+        "Sí, porque el histograma permite identificar directamente qué clientes hicieron esas compras.",
+        "No, porque un histograma solo puede construirse con datos de un único cliente a la vez."
+      ],
+      correct: 1,
+      explain: "Un histograma describe la distribución de una variable (valores de compra), no explica causas ni comportamientos como la lealtad. Eso requiere otro tipo de análisis."
+    },
+    {
+      story: "Una cadena de restaurantes compara las propinas en dos sedes. En la Sede Playa, la mayoría de las propinas es baja, con unas pocas muy altas que alargan la distribución. En la Sede Centro, la mayoría es alta, con unas pocas muy bajas.",
+      prompt: "¿Cómo se describe correctamente el sesgo de cada sede?",
+      options: [
+        "Ambas tienen sesgo a la derecha, porque en ambas hay valores alejados del grupo principal.",
+        "Sede Playa: sesgo a la izquierda. Sede Centro: sesgo a la derecha.",
+        "Sede Playa: sesgo a la derecha. Sede Centro: sesgo a la izquierda.",
+        "No puede determinarse el sesgo sin conocer el valor exacto de cada propina."
+      ],
+      correct: 2,
+      explain: "El sesgo sigue la dirección de la cola. Playa: cola hacia valores altos → sesgo a la derecha. Centro: cola hacia valores bajos → sesgo a la izquierda."
+    },
+    {
+      story: "Un centro de llamadas compara dos líneas de atención. En la Línea A, los tiempos de espera se concentran muy cerca unos de otros. En la Línea B, los tiempos están mucho más repartidos entre valores muy bajos y muy altos.",
+      prompt: "¿Qué línea tiene un comportamiento más predecible en sus tiempos de espera?",
+      options: [
+        "Línea B, porque una mayor dispersión indica que puede atender más tipos de casos.",
+        "Línea A, porque una menor dispersión implica que sus tiempos son más parecidos entre sí.",
+        "Línea A, porque una menor dispersión significa necesariamente que atiende más rápido.",
+        "Línea B, porque la mayor dispersión indica mayor variedad de clientes satisfechos."
+      ],
+      correct: 1,
+      explain: "Menor dispersión = tiempos más parecidos entre sí = más predecible. No implica velocidad, calidad ni capacidad — solo consistencia."
+    },
+    {
+      story: "En R, una analista accede a la columna Ingresos de un data frame llamado empresa escribiendo empresa$Ingresos.",
+      prompt: "¿Cuál es la forma habitual de escribir lo mismo en Python (pandas)?",
+      options: [
+        "empresa(Ingresos)",
+        "empresa[\"Ingresos\"]",
+        "empresa.Ingresos()",
+        "empresa$[\"Ingresos\"]"
+      ],
+      correct: 1,
+      explain: "pandas usa corchetes con el nombre de columna entre comillas: empresa[\"Ingresos\"]. Los paréntesis no se usan para indexar columnas."
+    }
+  ];
+
+  let score = 0;
+  const answeredSet = new Set();
+  function renderQuiz(){
+    const container = document.getElementById("quizContainer");
+    container.innerHTML = "";
+    score = 0;
+    answeredSet.clear();
+    quiz.forEach((q, qi) => {
+      const item = document.createElement("div");
+      item.className = "quiz-item";
+      const optsHtml = q.options.map((opt, oi) =>
+        '<div class="opt" data-oi="' + oi + '"><span class="letter">' + String.fromCharCode(97+oi) + '.</span><span>' + opt + '</span></div>'
+      ).join("");
+      item.innerHTML =
+        '<div class="qn">Pregunta ' + (qi+1) + ' / 10</div>' +
+        '<div class="prompt"><span class="story">' + q.story + '</span>' + q.prompt + '</div>' +
+        optsHtml +
+        '<div class="explain" id="qexp' + qi + '">' + q.explain + '</div>';
+      container.appendChild(item);
+
+      item.querySelectorAll(".opt").forEach(optEl => {
+        optEl.addEventListener("click", () => {
+          if (answeredSet.has(qi)) return;
+          answeredSet.add(qi);
+          const oi = parseInt(optEl.dataset.oi, 10);
+          item.querySelectorAll(".opt").forEach((el, j) => {
+            el.classList.add("disabled");
+            if (j === q.correct) el.classList.add("correct");
+            else if (j === oi) el.classList.add("incorrect");
+          });
+          if (oi === q.correct) score++;
+          document.getElementById("qexp" + qi).classList.add("show");
+          updateScore();
+        });
+      });
+    });
+    updateScore();
+  }
+  function updateScore(){
+    document.getElementById("scoreBadge").textContent = "Puntaje: " + score + "/10 (respondidas: " + answeredSet.size + "/10)";
+  }
+  document.getElementById("quizReset").addEventListener("click", renderQuiz);
+  renderQuiz();
+
+  // ---------------- progress tracking ----------------
+  const modIds = ["m1","m2","m3","m4","m5","m6","m7","m8"];
+  function loadProgress(){
+    modIds.forEach(id => {
+      const stored = safeGet("bitacora-" + id);
+      const box = document.querySelector('input[type="checkbox"][data-mod="' + id + '"]');
+      if (box && stored === "1") box.checked = true;
+    });
+    updateProgressUI();
+  }
+  function updateProgressUI(){
+    let done = 0;
+    modIds.forEach(id => {
+      const box = document.querySelector('input[type="checkbox"][data-mod="' + id + '"]');
+      const pill = document.querySelector('nav.pills a[data-mod="' + id + '"] .dot');
+      const isDone = box && box.checked;
+      if (isDone) done++;
+      if (pill) pill.style.background = isDone ? "var(--accent-2)" : "";
+    });
+    document.getElementById("progressLabel").textContent = done + "/8 módulos";
+    document.getElementById("progressFill").style.width = (done/8*100) + "%";
+  }
+  document.querySelectorAll('input[type="checkbox"][data-mod]').forEach(box => {
+    box.addEventListener("change", () => {
+      safeSet("bitacora-" + box.dataset.mod, box.checked ? "1" : "0");
+      updateProgressUI();
+    });
+  });
+  loadProgress();
+
+  // ---------------- active nav highlight ----------------
+  const sections = ["histogramas","frecuencia","sesgo","dispersion","imputacion","python","r-python","practica"];
+  const navLinks = Array.from(document.querySelectorAll("nav.pills a"));
+  if ("IntersectionObserver" in window){
+    const obs = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting){
+          const id = entry.target.id;
+          navLinks.forEach(a => a.classList.toggle("active", a.getAttribute("href") === "#" + id));
+        }
+      });
+    }, { rootMargin: "-40% 0px -55% 0px" });
+    sections.forEach(id => {
+      const el = document.getElementById(id);
+      if (el) obs.observe(el);
+    });
+  }
+})();
+</script>
